@@ -4,12 +4,19 @@
 
 #ifndef MAINCONTROLLER_HPP
 #define MAINCONTROLLER_HPP
+#include <engine/core/Controller.hpp>
 
 namespace app {
 
-class MainController {
+class MainController : public engine::core::Controller{
+    void initialize() override;
 
-        void initialize();
+
+public:
+    std::string_view name() const override {
+        return "app::MainController";
+    }
+
     bool loop();
 };
 

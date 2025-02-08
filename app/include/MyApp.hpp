@@ -9,6 +9,8 @@
 namespace app {
 
 class MyApp : public engine::core::App {
+
+
         void app_setup() override;
     };
 

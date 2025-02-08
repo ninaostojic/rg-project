@@ -4,9 +4,11 @@
 
 #include "../include/MainController.hpp"
 #include <engine/core/Engine.hpp>
+#include <spdlog/spdlog.h>
 
 namespace app {
     void MainController::initialize() {
+        spdlog::info("MainController initialized");
     }
 
     bool MainController::loop() {
@@ -16,4 +18,7 @@ namespace app {
         }
         return true;
     }
+
+
+
 } // app
