@@ -1,7 +1,7 @@
 {
   "resources": {
     "models": {
-      "backpack" : {
+      "corgi" : {
         "path" : "corgi/Corgi-2018/export/Corgi-2018-obj.obj"
       }
     }
