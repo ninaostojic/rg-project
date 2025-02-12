@@ -1,5 +1,4 @@
-// #shader vertex
-
+//#shader vertex
 #version 330 core
 
 layout(location = 0) in vec3 aPos;
@@ -16,30 +15,22 @@ uniform mat4 projection;
 
 void main()
 {
-    FragPos = vec3(model * vec4(aPos, 1.0));
+    FragPos = vec3(model * vec4(aPos, 1.0));  // Pravilno izračunavanje pozicije fragmenata
     Normal = aNormal;
     TexCoords = aTexCoords;
-    gl_position = projection * view * vec4(fragPos, 1.0);
+    gl_Position = projection * view * vec4(FragPos, 1.0);  // Popravka imena 'FragPos' i ispravka gl_Position
 }
 
-// #shader fragment
-
+//#shader fragment
 #version 330 core
 
 out vec4 FragColor;
-
 
 in vec2 TexCoords;
 
 uniform sampler2D texture_diffuse1;
 
-void main(){
-
+void main()
+{
     FragColor = vec4(texture(texture_diffuse1, TexCoords).rgb, 1.0);
-
 }
-
-
-
-
-
