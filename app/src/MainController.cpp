@@ -28,7 +28,7 @@ namespace app {
         // Model
         auto resources                  = engine::core::Controller::get<engine::resources::ResourcesController>();
         auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
-        engine::resources::Model* corgi = resources->model("corgi");
+        engine::resources::Model* corgi = resources->model("backpack");
         // Shader
         engine::resources::Shader* shader = resources->shader("basic");
 

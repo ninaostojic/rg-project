@@ -3,6 +3,9 @@
     "models": {
       "corgi" : {
         "path" : "corgi/Corgi-2018/export/Corgi-2018-obj.obj"
+      },
+      "backpack": {
+        "path": "backpack/backpack.obj"
       }
     }
   },
