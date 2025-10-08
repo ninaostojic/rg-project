@@ -23,8 +23,8 @@ namespace app {
         }
         return true;
     }
-    void MainController::draw_corgi() {
 
+    void MainController::draw_corgi() {
         // Model
         auto resources                  = engine::core::Controller::get<engine::resources::ResourcesController>();
         auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
@@ -40,11 +40,9 @@ namespace app {
         model = glm::scale(model, glm::vec3(0.3f));
         shader->set_mat4("model", model);
 
-
         corgi->draw(shader);
     }
     void MainController::begin_draw() {
-
         engine::graphics::OpenGL::clear_buffers();
     }
     void MainController::draw() {
@@ -55,6 +53,36 @@ namespace app {
     void MainController::end_draw() {
         auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
         platform->swap_buffers();
+    }
+
+    void MainController::update_camera() {
+        auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
+        auto camera = engine::core::Controller::get<engine::graphics::GraphicsController>()->camera();
+        float dt = platform->dt();
+        if (platform->key(engine::platform::KEY_W)
+                    .state() == engine::platform::Key::State::Pressed) {
+            camera->move_camera(engine::graphics::Camera::Movement::FORWARD, dt);
+                    }
+        if (platform->key(engine::platform::KEY_S)
+                    .state() == engine::platform::Key::State::Pressed) {
+            camera->move_camera(engine::graphics::Camera::Movement::BACKWARD, dt);
+                    }
+        if (platform->key(engine::platform::KEY_A)
+                    .state() == engine::platform::Key::State::Pressed) {
+            camera->move_camera(engine::graphics::Camera::Movement::LEFT, dt);
+                    }
+        if (platform->key(engine::platform::KEY_D)
+                    .state() == engine::platform::Key::State::Pressed) {
+            camera->move_camera(engine::graphics::Camera::Movement::RIGHT, dt);
+                    }
+        auto mouse = platform->mouse();
+        float sensitivity = 10.0f; // kamera se okrece previse sporo
+        camera->rotate_camera(mouse.dx * sensitivity, mouse.dy * sensitivity);
+        camera->zoom(mouse.scroll);
+    }
+
+    void MainController::update() {
+        update_camera();
     }
 
 } // app
