@@ -30,7 +30,7 @@ namespace app {
         auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
         engine::resources::Model* corgi = resources->model("backpack");
         // Shader
-        engine::resources::Shader* shader = resources->shader("basic");
+        engine::resources::Shader* shader = resources->shader("textured_lit");
 
         shader->use();
         shader->set_mat4("projection", graphics->projection_matrix());
@@ -40,6 +40,9 @@ namespace app {
         model = glm::scale(model, glm::vec3(0.3f));
         shader->set_mat4("model", model);
 
+        shader->set_vec3("basicLightColor", glm::vec3(0.4f, 0.3f, 1.0f));
+        shader->set_vec3("basicLightPosition", glm::vec3(0.0f, 2.0f, 2.0f));
+        shader->set_vec3("viewingPosition", graphics->camera()->Position);
         corgi->draw(shader);
     }
     void MainController::begin_draw() {
