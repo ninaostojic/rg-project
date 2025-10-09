@@ -13,14 +13,14 @@ namespace app {
         engine::graphics::OpenGL::enable_depth_testing();
 
         m_directional_light.direction = glm::vec3(0.0f, -2.0f, -2.0f);
-        m_directional_light.ambient   = glm::vec3(0.4f, 0.3f, 1.0f);
+        m_directional_light.ambient   = glm::vec3(0.005f, 0.005f, 0.005f);
         m_directional_light.diffuse   = glm::vec3(0.4f, 0.3f, 1.0f);
-        m_directional_light.specular  = glm::vec3(0.4f, 0.3f, 1.0f);
+        m_directional_light.specular  = glm::vec3(0.1f, 0.1f, 0.1f);
 
         m_point_light.position = glm::vec3(0.0, -5.0f, 1.0f);
-        m_point_light.ambient  = glm::vec3(0.1f, 1.0f, 0.2f);
+        m_point_light.ambient  = glm::vec3(0.005f, 0.005f, 0.005f);
         m_point_light.diffuse  = glm::vec3(0.1f, 10.0f, 0.2f);
-        m_point_light.specular = glm::vec3(0.1f, 1.0f, 0.2f);
+        m_point_light.specular = glm::vec3(0.1f, 0.1f, 0.1f);
 
         m_point_light.constant  = 1.0f;
         m_point_light.linear    = 0.09f;

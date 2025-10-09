@@ -64,8 +64,7 @@ void main()
     vec3 textureColor = texture(texture_diffuse1, TexCoords).rgb;
     vec3 result;
 
-    float ambientStrength = 0.1;
-    vec3 ambient = ambientStrength * directionalLight.ambient; // uvek prisutna, mala kolicina svetlosti
+    vec3 ambient = directionalLight.ambient; // uvek prisutna, mala kolicina svetlosti
 
     vec3 norm = normalize(Normal);
     vec3 lightDirection = normalize(-directionalLight.direction);
@@ -73,16 +72,15 @@ void main()
     float diff = max(dot(norm, lightDirection), 0.0);
     vec3 diffuse = diff * directionalLight.diffuse; // svetlo koje direktno pada na povrsinu modela, glavni deo osvetljenja
 
-    float specularStrength = 0.5;
     vec3 viewDirection = normalize(viewPosition - FragPos);
     vec3 reflectDirection = reflect(-lightDirection, norm);
 
     float spec = pow(max(dot(viewDirection, reflectDirection), 0.0), 32);
-    vec3 specular = specularStrength * spec * directionalLight.specular; // odsjaj koji se vidi na glatkim povrsinama
+    vec3 specular = spec * directionalLight.specular; // odsjaj koji se vidi na glatkim povrsinama
 
     result += (ambient + diffuse + specular);
 
-    vec3 pointAmbient = ambientStrength * pointLight.ambient; // uvek prisutna, mala kolicina svetlosti
+    vec3 pointAmbient = pointLight.ambient; // uvek prisutna, mala kolicina svetlosti
 
     vec3 pointLightDirection = normalize(pointLight.position - FragPos);
 
@@ -92,7 +90,7 @@ void main()
     vec3 pointReflectDirection = reflect(-pointLightDirection, norm);
 
     float pointSpec = pow(max(dot(viewDirection, pointReflectDirection), 0.0), 32);
-    vec3 pointSpecular = specularStrength * pointSpec * pointLight.specular; // odsjaj koji se vidi na glatkim povrsinama
+    vec3 pointSpecular = pointSpec * pointLight.specular; // odsjaj koji se vidi na glatkim povrsinama
 
     float distance    = length(pointLight.position - FragPos);
     float attenuation = 1.0 / (pointLight.constant + pointLight.linear * distance +
