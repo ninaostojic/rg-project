@@ -140,6 +140,8 @@ namespace engine::graphics {
         */
         static std::string get_compilation_error_message(uint32_t shader_id);
 
+        static void create_bloom_fbo(int windowWidth, int windowHeight);
+
     private:
         /**
         * @brief Throws an engine::util::EngineError of type @ref engine::util::EngineError::Type::OpenGLError if an OpenGL error occurred. Used internally.

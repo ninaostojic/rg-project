@@ -26,6 +26,10 @@ namespace app {
         m_point_light.linear    = 0.09f;
         m_point_light.quadratic = 0.032f;
 
+        auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
+        auto window = platform->window();
+        engine::graphics::OpenGL::create_bloom_fbo(window->width(), window->height());
+
         spdlog::info("MainController initialized");
     }
 

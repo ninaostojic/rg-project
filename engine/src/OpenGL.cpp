@@ -203,4 +203,36 @@ namespace engine::graphics {
         }
     }
 
+    void OpenGL::create_bloom_fbo(int windowWidth, int windowHeight) {
+        unsigned int bloomFBO;
+        CHECKED_GL_CALL(glGenFramebuffers, 1, &bloomFBO);
+        CHECKED_GL_CALL(glBindFramebuffer, GL_FRAMEBUFFER, bloomFBO);
+
+        unsigned int colorBuffers[2];
+        CHECKED_GL_CALL(glGenTextures, 2, colorBuffers);
+        for (unsigned int i = 0; i < 2; i++) {
+            CHECKED_GL_CALL(glBindTexture, GL_TEXTURE_2D, colorBuffers[i]);
+            CHECKED_GL_CALL(glTexImage2D, GL_TEXTURE_2D, 0, GL_RGBA16F, windowWidth, windowHeight, 0, GL_RGBA, GL_FLOAT,
+                            nullptr
+                    );
+            CHECKED_GL_CALL(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            CHECKED_GL_CALL(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            CHECKED_GL_CALL(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            CHECKED_GL_CALL(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+            CHECKED_GL_CALL(glFramebufferTexture2D,
+                            GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, colorBuffers[i], 0
+                    );
+        }
+
+        unsigned int depthRBO;
+        CHECKED_GL_CALL(glGenRenderbuffers, 1, &depthRBO);
+        CHECKED_GL_CALL(glBindRenderbuffer, GL_RENDERBUFFER, depthRBO);
+        CHECKED_GL_CALL(glRenderbufferStorage, GL_RENDERBUFFER, GL_DEPTH_COMPONENT, windowWidth, windowHeight);
+        CHECKED_GL_CALL(glFramebufferRenderbuffer, GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRBO);
+
+        unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+        CHECKED_GL_CALL(glDrawBuffers, 2, attachments);
+    }
+
 };
