@@ -45,7 +45,7 @@ struct DirectionalLight {
 uniform DirectionalLight directionalLight;
 
 struct PointLight {
-    vec3 direction;
+    vec3 position;
 
     vec3 ambient;
     vec3 diffuse;
@@ -83,7 +83,7 @@ void main()
 
     vec3 pointAmbient = ambientStrength * pointLight.ambient; // uvek prisutna, mala kolicina svetlosti
 
-    vec3 pointLightDirection = normalize(-pointLight.direction);
+    vec3 pointLightDirection = normalize(pointLight.position - FragPos);
 
     float pointDiff = max(dot(norm, pointLightDirection), 0.0);
     vec3 pointDiffuse = pointDiff * pointLight.diffuse; // svetlo koje direktno pada na povrsinu modela, glavni deo osvetljenja
@@ -93,7 +93,10 @@ void main()
     float pointSpec = pow(max(dot(viewDirection, pointReflectDirection), 0.0), 32);
     vec3 pointSpecular = specularStrength * pointSpec * pointLight.specular; // odsjaj koji se vidi na glatkim povrsinama
 
-    result += (pointAmbient + pointDiffuse + pointSpecular);
+    float distance    = length(pointLight.position - FragPos);
+    float attenuation = 1.0 / (pointLight.constant + pointLight.linear * distance +
+        		    pointLight.quadratic * (distance * distance));
+    result += (pointAmbient + pointDiffuse + pointSpecular) * attenuation;
 
     FragColor = vec4(result * textureColor, 1.0);
 }
