@@ -10,33 +10,34 @@
 
 namespace app {
 
-class MainController : public engine::core::Controller{
-    void initialize() override;
+    class MainController : public engine::core::Controller {
+        void initialize() override;
 
-    bool loop() override;
+        bool loop() override;
 
-    void draw_backpack();
+        void draw_backpack();
 
-    void begin_draw() override;
+        void begin_draw() override;
 
-    void draw() override;
+        void draw() override;
 
-    void end_draw() override;
+        void end_draw() override;
 
-    void update_camera();
+        void update_camera();
 
-    void update() override;
+        void update() override;
 
+        void poll_events() override;
+    public:
+        std::string_view name() const override {
+            return "app::MainController";
+        }
 
-public:
-    std::string_view name() const override {
-        return "app::MainController";
-    }
-
-private:
-    DirectionalLight m_directional_light;
-    PointLight m_point_light;
-};
+    private:
+        DirectionalLight m_directional_light;
+        PointLight m_point_light;
+        bool m_cursor_visible;
+    };
 
 } // app
 
