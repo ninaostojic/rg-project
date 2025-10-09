@@ -35,6 +35,7 @@ public:
 
 private:
     DirectionalLight m_directional_light;
+    PointLight m_point_light;
 };
 
 } // app

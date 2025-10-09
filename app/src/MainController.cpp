@@ -17,6 +17,15 @@ namespace app {
         m_directional_light.diffuse = glm::vec3(0.4f, 0.3f, 1.0f);
         m_directional_light.specular = glm::vec3(0.4f, 0.3f, 1.0f);
 
+        m_point_light.position = glm::vec3(0.0, -5.0f, 1.0f);
+        m_point_light.ambient = glm::vec3(0.1f, 1.0f, 0.2f);
+        m_point_light.diffuse = glm::vec3(0.1f, 1.0f, 0.2f);
+        m_point_light.specular = glm::vec3(0.1f, 1.0f, 0.2f);
+
+        m_point_light.constant = 1.0f;
+        m_point_light.linear = 0.09f;
+        m_point_light.quadratic = 0.032f;
+
         spdlog::info("MainController initialized");
     }
 
@@ -49,6 +58,17 @@ namespace app {
         shader->set_vec3("directionalLight.diffuse", m_directional_light.diffuse);
         shader->set_vec3("directionalLight.ambient", m_directional_light.ambient);
         shader->set_vec3("directionalLight.specular", m_directional_light.specular);
+
+        shader->set_vec3("pointLight.position", m_point_light.position);
+
+        shader->set_vec3("pointLight.diffuse", m_point_light.diffuse);
+        shader->set_vec3("pointLight.ambient", m_point_light.ambient);
+        shader->set_vec3("pointLight.specular", m_point_light.specular);
+
+        shader->set_float("pointLight.constant", m_point_light.constant);
+        shader->set_float("pointLight.linear", m_point_light.linear);
+        shader->set_float("pointLight.quadratic", m_point_light.quadratic);
+
         shader->set_vec3("viewingPosition", graphics->camera()->Position);
         corgi->draw(shader);
     }
