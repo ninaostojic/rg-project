@@ -6,6 +6,8 @@
 #define MAINCONTROLLER_HPP
 #include <engine/core/Controller.hpp>
 
+#include <Lights.hpp>
+
 namespace app {
 
 class MainController : public engine::core::Controller{
@@ -13,7 +15,7 @@ class MainController : public engine::core::Controller{
 
     bool loop() override;
 
-    static void draw_corgi();
+    void draw_backpack();
 
     void begin_draw() override;
 
@@ -31,7 +33,8 @@ public:
         return "app::MainController";
     }
 
-
+private:
+    DirectionalLight m_directional_light;
 };
 
 } // app

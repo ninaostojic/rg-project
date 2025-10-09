@@ -12,6 +12,10 @@ namespace app {
     void MainController::initialize() {
         engine::graphics::OpenGL::enable_depth_testing();
 
+        m_directional_light.direction = glm::vec3(0.0f, -2.0f, -2.0f);
+        m_directional_light.ambient = glm::vec3(0.4f, 0.3f, 1.0f);
+        m_directional_light.diffuse = glm::vec3(0.4f, 0.3f, 1.0f);
+        m_directional_light.specular = glm::vec3(0.4f, 0.3f, 1.0f);
 
         spdlog::info("MainController initialized");
     }
@@ -24,7 +28,7 @@ namespace app {
         return true;
     }
 
-    void MainController::draw_corgi() {
+    void MainController::draw_backpack() {
         // Model
         auto resources                  = engine::core::Controller::get<engine::resources::ResourcesController>();
         auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
@@ -40,11 +44,11 @@ namespace app {
         model = glm::scale(model, glm::vec3(0.3f));
         shader->set_mat4("model", model);
 
-        shader->set_vec3("directionalLight.direction", glm::vec3(0.0f, -2.0f, -2.0f));
+        shader->set_vec3("directionalLight.direction", m_directional_light.direction);
 
-        shader->set_vec3("directionalLight.diffuse", glm::vec3(0.4f, 0.3f, 1.0f));
-        shader->set_vec3("directionalLight.ambient", glm::vec3(0.4f, 0.3f, 1.0f));
-        shader->set_vec3("directionalLight.specular", glm::vec3(0.4f, 0.3f, 1.0f));
+        shader->set_vec3("directionalLight.diffuse", m_directional_light.diffuse);
+        shader->set_vec3("directionalLight.ambient", m_directional_light.ambient);
+        shader->set_vec3("directionalLight.specular", m_directional_light.specular);
         shader->set_vec3("viewingPosition", graphics->camera()->Position);
         corgi->draw(shader);
     }
@@ -53,7 +57,7 @@ namespace app {
     }
     void MainController::draw() {
         // clear buffers (color buffer, depth buffer)
-        draw_corgi();
+        draw_backpack();
         // swapbuffers
     }
     void MainController::end_draw() {
