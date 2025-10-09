@@ -1,0 +1,29 @@
+# exported by https://3dviewer.net
+newmtl material
+Kd 0.8862745098039215 0.8862745098039215 0.8862745098039215
+d 1
+map_Kd Binary_0.png
+newmtl .005
+Kd 1 1 1
+d 1
+map_Kd Binary_3.png
+newmtl .006
+Kd 1 1 1
+d 1
+map_Kd Binary_6.png
+newmtl .007
+Kd 1 1 1
+d 1
+map_Kd Binary_9.png
+newmtl .010
+Kd 0.9019607843137255 0.9019607843137255 0.9019607843137255
+d 1
+map_Kd Binary_12.png
+newmtl .019
+Kd 1 1 1
+d 1
+map_Kd Binary_15.png
+newmtl .021
+Kd 1 1 1
+d 1
+map_Kd Binary_18.png
