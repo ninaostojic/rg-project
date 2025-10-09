@@ -40,8 +40,11 @@ namespace app {
         model = glm::scale(model, glm::vec3(0.3f));
         shader->set_mat4("model", model);
 
-        shader->set_vec3("basicLightColor", glm::vec3(0.4f, 0.3f, 1.0f));
-        shader->set_vec3("basicLightPosition", glm::vec3(0.0f, 2.0f, 2.0f));
+        shader->set_vec3("directionalLight.direction", glm::vec3(0.0f, -2.0f, -2.0f));
+
+        shader->set_vec3("directionalLight.diffuse", glm::vec3(0.4f, 0.3f, 1.0f));
+        shader->set_vec3("directionalLight.ambient", glm::vec3(0.4f, 0.3f, 1.0f));
+        shader->set_vec3("directionalLight.specular", glm::vec3(0.4f, 0.3f, 1.0f));
         shader->set_vec3("viewingPosition", graphics->camera()->Position);
         corgi->draw(shader);
     }

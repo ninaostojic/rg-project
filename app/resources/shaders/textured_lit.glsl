@@ -32,29 +32,37 @@ in vec3 FragPos;
 
 uniform sampler2D texture_diffuse1;
 
-uniform vec3 basicLightColor;
-uniform vec3 basicLightPosition;
 uniform vec3 viewPosition;
+
+struct DirectionalLight {
+    vec3 direction;
+
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
+
+uniform DirectionalLight directionalLight;
 
 void main()
 {
     vec3 textureColor = texture(texture_diffuse1, TexCoords).rgb;
 
     float ambientStrength = 0.1;
-    vec3 ambient = ambientStrength * basicLightColor; // uvek prisutna, mala kolicina svetlosti
+    vec3 ambient = ambientStrength * directionalLight.ambient; // uvek prisutna, mala kolicina svetlosti
 
     vec3 norm = normalize(Normal);
-    vec3 lightDirection = normalize(basicLightPosition - FragPos);
+    vec3 lightDirection = normalize(-directionalLight.direction);
 
     float diff = max(dot(norm, lightDirection), 0.0);
-    vec3 diffuse = diff * basicLightColor; // svetlo koje direktno pada na povrsinu modela, glavni deo osvetljenja
+    vec3 diffuse = diff * directionalLight.diffuse; // svetlo koje direktno pada na povrsinu modela, glavni deo osvetljenja
 
     float specularStrength = 0.5;
     vec3 viewDirection = normalize(viewPosition - FragPos);
     vec3 reflectDirection = reflect(-lightDirection, norm);
 
     float spec = pow(max(dot(viewDirection, reflectDirection), 0.0), 32);
-    vec3 specular = specularStrength * spec * basicLightColor; // odsjaj koji se vidi na glatkim povrsinama
+    vec3 specular = specularStrength * spec * directionalLight.specular; // odsjaj koji se vidi na glatkim povrsinama
 
     vec3 result = (ambient + diffuse + specular) * textureColor;
     FragColor = vec4(result, 1.0);
