@@ -204,15 +204,15 @@ namespace engine::graphics {
     }
 
     unsigned int bloomFBO;
-    unsigned int colorBuffers[2];
+    unsigned int bloomTextures[2];
 
     void OpenGL::create_bloom_fbo(int windowWidth, int windowHeight) {
         CHECKED_GL_CALL(glGenFramebuffers, 1, &bloomFBO);
         CHECKED_GL_CALL(glBindFramebuffer, GL_FRAMEBUFFER, bloomFBO);
 
-        CHECKED_GL_CALL(glGenTextures, 2, colorBuffers);
+        CHECKED_GL_CALL(glGenTextures, 2, bloomTextures);
         for (unsigned int i = 0; i < 2; i++) {
-            CHECKED_GL_CALL(glBindTexture, GL_TEXTURE_2D, colorBuffers[i]);
+            CHECKED_GL_CALL(glBindTexture, GL_TEXTURE_2D, bloomTextures[i]);
             CHECKED_GL_CALL(glTexImage2D, GL_TEXTURE_2D, 0, GL_RGBA16F, windowWidth, windowHeight, 0, GL_RGBA, GL_FLOAT,
                             nullptr
                     );
@@ -222,7 +222,7 @@ namespace engine::graphics {
             CHECKED_GL_CALL(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
             CHECKED_GL_CALL(glFramebufferTexture2D,
-                            GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, colorBuffers[i], 0
+                            GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, bloomTextures[i], 0
                     );
         }
 
@@ -262,14 +262,34 @@ namespace engine::graphics {
         CHECKED_GL_CALL(glVertexAttribPointer, 1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
         CHECKED_GL_CALL(glEnableVertexAttribArray, 1);
 
-
         CHECKED_GL_CALL(glActiveTexture, GL_TEXTURE0);
-        CHECKED_GL_CALL(glBindTexture, GL_TEXTURE_2D, colorBuffers[0]);
+        CHECKED_GL_CALL(glBindTexture, GL_TEXTURE_2D, bloomTextures[1]);
 
         CHECKED_GL_CALL(glBindFramebuffer, GL_FRAMEBUFFER, 0);
         CHECKED_GL_CALL(glBindVertexArray, VAO);
         CHECKED_GL_CALL(glDrawArrays, GL_TRIANGLE_FAN, 0, 4);
     }
+    unsigned int blurFBO[2];
+    unsigned int blurTextures[2];
 
+    void OpenGL::crate_blur_fbo(int windowWidth, int windowHeight) {
+        CHECKED_GL_CALL(glGenFramebuffers, 2, blurFBO);
+        CHECKED_GL_CALL(glGenTextures, 2, blurTextures);
+        for (unsigned int i = 0; i < 2; i++)
+        {
+            CHECKED_GL_CALL(glBindFramebuffer, GL_FRAMEBUFFER, blurFBO[i]);
+            CHECKED_GL_CALL(glBindTexture, GL_TEXTURE_2D, blurTextures[i]);
+            CHECKED_GL_CALL(glTexImage2D, 
+                GL_TEXTURE_2D, 0, GL_RGBA16F, windowWidth, windowHeight, 0, GL_RGBA, GL_FLOAT, nullptr
+            );
+            CHECKED_GL_CALL(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            CHECKED_GL_CALL(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            CHECKED_GL_CALL(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            CHECKED_GL_CALL(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            CHECKED_GL_CALL(glFramebufferTexture2D, 
+                GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, blurTextures[i], 0
+            );
+        }
+    }
 
 };

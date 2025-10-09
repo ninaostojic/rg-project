@@ -141,6 +141,7 @@ namespace engine::graphics {
         static std::string get_compilation_error_message(uint32_t shader_id);
 
         static void create_bloom_fbo(int windowWidth, int windowHeight);
+        static void crate_blur_fbo(int windowWidth, int windowHeight);
 
         static void bind_and_clear_fbo_framebuffer();
 
