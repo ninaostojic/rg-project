@@ -62,9 +62,9 @@ namespace engine::graphics {
             return skybox_vao;
         }
         float vertices[] = {
-            // formatter: off
-            #include <skybox_vertices.include>
-            // formatter: on
+                // formatter: off
+#include <skybox_vertices.include>
+                // formatter: on
         };
         uint32_t skybox_vbo = 0;
         CHECKED_GL_CALL(glGenVertexArrays, 1, &skybox_vao);
@@ -203,8 +203,35 @@ namespace engine::graphics {
         }
     }
 
+    void OpenGL::draw_fullscreen_rect() {
+        // pravougaonik koji pokriva ceo ekran
+        float vertices[] = {
+                -1.0f, 1.0f, 0.0f, 1.0f,
+                -1.0f, -1.0f, 0.0f, 0.0f,
+                1.0f, -1.0f, 1.0f, 0.0f,
+                1.0f, 1.0f, 1.0f, 1.0f
+        };
+
+        unsigned int VAO, VBO;
+        CHECKED_GL_CALL(glGenVertexArrays, 1, &VAO);
+        CHECKED_GL_CALL(glGenBuffers, 1, &VBO);
+        CHECKED_GL_CALL(glBindVertexArray, VAO);
+        CHECKED_GL_CALL(glBindBuffer, GL_ARRAY_BUFFER, VBO);
+        CHECKED_GL_CALL(glBufferData, GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+        CHECKED_GL_CALL(glVertexAttribPointer, 0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+        CHECKED_GL_CALL(glEnableVertexAttribArray, 0);
+        CHECKED_GL_CALL(glVertexAttribPointer, 1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+        CHECKED_GL_CALL(glEnableVertexAttribArray, 1);
+
+        CHECKED_GL_CALL(glBindVertexArray, VAO);
+        CHECKED_GL_CALL(glDrawArrays, GL_TRIANGLE_FAN, 0, 4);
+    }
+
     unsigned int bloomFBO;
     unsigned int bloomTextures[2];
+
+    unsigned int blurFBO[2];
+    unsigned int blurTextures[2];
 
     void OpenGL::create_bloom_fbo(int windowWidth, int windowHeight) {
         CHECKED_GL_CALL(glGenFramebuffers, 1, &bloomFBO);
@@ -232,64 +259,51 @@ namespace engine::graphics {
         CHECKED_GL_CALL(glRenderbufferStorage, GL_RENDERBUFFER, GL_DEPTH_COMPONENT, windowWidth, windowHeight);
         CHECKED_GL_CALL(glFramebufferRenderbuffer, GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRBO);
 
-        unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+        unsigned int attachments[2] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
         CHECKED_GL_CALL(glDrawBuffers, 2, attachments);
     }
 
     void OpenGL::bind_and_clear_fbo_framebuffer() {
+        for (int i = 0; i < 2; i++) {
+            CHECKED_GL_CALL(glBindFramebuffer, GL_FRAMEBUFFER, blurFBO[i]);
+            CHECKED_GL_CALL(glClear, GL_COLOR_BUFFER_BIT);
+        }
         CHECKED_GL_CALL(glBindFramebuffer, GL_FRAMEBUFFER, bloomFBO);
         CHECKED_GL_CALL(glClear, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-
     void OpenGL::draw_framebuffer() {
-        // pravougaonik koji pokriva ceo ekran
-        float vertices[] = {
-            -1.0f,  1.0f,   0.0f, 1.0f,
-            -1.0f, -1.0f,   0.0f, 0.0f,
-             1.0f, -1.0f,   1.0f, 0.0f,
-             1.0f,  1.0f,   1.0f, 1.0f
-        };
-
-        unsigned int VAO, VBO;
-        CHECKED_GL_CALL(glGenVertexArrays, 1, &VAO);
-        CHECKED_GL_CALL(glGenBuffers, 1, &VBO);
-        CHECKED_GL_CALL(glBindVertexArray, VAO);
-        CHECKED_GL_CALL(glBindBuffer, GL_ARRAY_BUFFER, VBO);
-        CHECKED_GL_CALL(glBufferData, GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-        CHECKED_GL_CALL(glVertexAttribPointer, 0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-        CHECKED_GL_CALL(glEnableVertexAttribArray, 0);
-        CHECKED_GL_CALL(glVertexAttribPointer, 1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-        CHECKED_GL_CALL(glEnableVertexAttribArray, 1);
-
         CHECKED_GL_CALL(glActiveTexture, GL_TEXTURE0);
-        CHECKED_GL_CALL(glBindTexture, GL_TEXTURE_2D, bloomTextures[1]);
-
+        CHECKED_GL_CALL(glBindTexture, GL_TEXTURE_2D, blurTextures[1]);
         CHECKED_GL_CALL(glBindFramebuffer, GL_FRAMEBUFFER, 0);
-        CHECKED_GL_CALL(glBindVertexArray, VAO);
-        CHECKED_GL_CALL(glDrawArrays, GL_TRIANGLE_FAN, 0, 4);
+
+        draw_fullscreen_rect();
     }
-    unsigned int blurFBO[2];
-    unsigned int blurTextures[2];
 
     void OpenGL::crate_blur_fbo(int windowWidth, int windowHeight) {
         CHECKED_GL_CALL(glGenFramebuffers, 2, blurFBO);
         CHECKED_GL_CALL(glGenTextures, 2, blurTextures);
-        for (unsigned int i = 0; i < 2; i++)
-        {
+        for (unsigned int i = 0; i < 2; i++) {
             CHECKED_GL_CALL(glBindFramebuffer, GL_FRAMEBUFFER, blurFBO[i]);
             CHECKED_GL_CALL(glBindTexture, GL_TEXTURE_2D, blurTextures[i]);
-            CHECKED_GL_CALL(glTexImage2D, 
-                GL_TEXTURE_2D, 0, GL_RGBA16F, windowWidth, windowHeight, 0, GL_RGBA, GL_FLOAT, nullptr
-            );
+            CHECKED_GL_CALL(glTexImage2D,
+                            GL_TEXTURE_2D, 0, GL_RGBA16F, windowWidth, windowHeight, 0, GL_RGBA, GL_FLOAT, nullptr
+                    );
             CHECKED_GL_CALL(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             CHECKED_GL_CALL(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             CHECKED_GL_CALL(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             CHECKED_GL_CALL(glTexParameteri, GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            CHECKED_GL_CALL(glFramebufferTexture2D, 
-                GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, blurTextures[i], 0
-            );
+            CHECKED_GL_CALL(glFramebufferTexture2D,
+                            GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, blurTextures[i], 0
+                    );
         }
     }
 
+    void OpenGL::blur_framebuffer_texture(int i, bool horizontal) {
+        CHECKED_GL_CALL(glActiveTexture, GL_TEXTURE0);
+        CHECKED_GL_CALL(glBindTexture, GL_TEXTURE_2D, (i == 0) ? bloomTextures[1] : blurTextures[!horizontal]);
+        CHECKED_GL_CALL(glBindFramebuffer, GL_FRAMEBUFFER, blurFBO[horizontal]);
+
+        draw_fullscreen_rect();
+    }
 };

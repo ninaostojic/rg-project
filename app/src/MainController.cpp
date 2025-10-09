@@ -19,7 +19,7 @@ namespace app {
 
         m_point_light.position = glm::vec3(0.0, -5.0f, 1.0f);
         m_point_light.ambient  = glm::vec3(0.1f, 1.0f, 0.2f);
-        m_point_light.diffuse  = glm::vec3(0.1f, 1.0f, 0.2f);
+        m_point_light.diffuse  = glm::vec3(0.1f, 10.0f, 0.2f);
         m_point_light.specular = glm::vec3(0.1f, 1.0f, 0.2f);
 
         m_point_light.constant  = 1.0f;
@@ -29,6 +29,7 @@ namespace app {
         auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
         auto window = platform->window();
         engine::graphics::OpenGL::create_bloom_fbo(window->width(), window->height());
+        engine::graphics::OpenGL::crate_blur_fbo(window->width(), window->height());
 
         spdlog::info("MainController initialized");
     }
@@ -100,12 +101,26 @@ namespace app {
     }
 
     void MainController::draw() {
+        auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
+
         engine::graphics::OpenGL::bind_and_clear_fbo_framebuffer();
 
         draw_backpack();
         draw_point_light();
 
-        auto fbo_shader = engine::core::Controller::get<engine::resources::ResourcesController>()->shader("fbo_shader");
+
+        auto blur_shader = resources->shader("blur");
+        blur_shader->use();
+        int amount = 10;
+        bool horizontal = true;
+        for (int i = 0; i < amount; i++) {
+            blur_shader->set_int("horizontal", horizontal);
+            blur_shader->set_int("image", 0);
+            engine::graphics::OpenGL::blur_framebuffer_texture(i, horizontal);
+            horizontal = !horizontal;
+        }
+
+        auto fbo_shader = resources->shader("fbo_shader");
         fbo_shader->use();
         fbo_shader->set_int("fboTexture", 0);
         engine::graphics::OpenGL::draw_framebuffer();
