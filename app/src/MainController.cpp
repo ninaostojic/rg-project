@@ -122,8 +122,10 @@ namespace app {
 
         auto fbo_shader = resources->shader("fbo_shader");
         fbo_shader->use();
-        fbo_shader->set_int("fboTexture", 0);
-        engine::graphics::OpenGL::draw_framebuffer();
+        fbo_shader->set_int("sceneTexture", 0);
+        fbo_shader->set_int("bloomTexture", 1);
+
+        engine::graphics::OpenGL::apply_blur_framebuffer();
     }
 
     void MainController::end_draw() {

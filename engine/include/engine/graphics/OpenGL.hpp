@@ -149,7 +149,7 @@ namespace engine::graphics {
 
         static void blur_framebuffer_texture(int i, bool horizontal);
 
-        static void draw_framebuffer();
+        static void apply_blur_framebuffer();
 
     private:
         /**

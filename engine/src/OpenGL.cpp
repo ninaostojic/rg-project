@@ -272,10 +272,15 @@ namespace engine::graphics {
         CHECKED_GL_CALL(glClear, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    void OpenGL::draw_framebuffer() {
-        CHECKED_GL_CALL(glActiveTexture, GL_TEXTURE0);
-        CHECKED_GL_CALL(glBindTexture, GL_TEXTURE_2D, blurTextures[1]);
+    void OpenGL::apply_blur_framebuffer() {
         CHECKED_GL_CALL(glBindFramebuffer, GL_FRAMEBUFFER, 0);
+
+        CHECKED_GL_CALL(glActiveTexture, GL_TEXTURE0);
+        CHECKED_GL_CALL(glBindTexture, GL_TEXTURE_2D, bloomTextures[0]);
+
+        CHECKED_GL_CALL(glActiveTexture, GL_TEXTURE1);
+        CHECKED_GL_CALL(glBindTexture, GL_TEXTURE_2D, blurTextures[0]);
+
 
         draw_fullscreen_rect();
     }
