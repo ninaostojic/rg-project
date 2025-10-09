@@ -100,10 +100,15 @@ namespace app {
     }
 
     void MainController::draw() {
-        // clear buffers (color buffer, depth buffer)
+        engine::graphics::OpenGL::bind_and_clear_fbo_framebuffer();
+
         draw_backpack();
         draw_point_light();
-        // swapbuffers
+
+        auto fbo_shader = engine::core::Controller::get<engine::resources::ResourcesController>()->shader("fbo_shader");
+        fbo_shader->use();
+        fbo_shader->set_int("fboTexture", 0);
+        engine::graphics::OpenGL::draw_framebuffer();
     }
 
     void MainController::end_draw() {
