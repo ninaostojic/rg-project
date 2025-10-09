@@ -1,0 +1,10 @@
+
+newmtl Material
+Ka 1.000 1.000 1.000  # Ambient color
+Kd 1.000 1.000 1.000  # Diffuse color
+Ks 0.000 0.000 0.000  # Specular color
+Ns 0.000             # Shininess (no shininess)
+illum 1              # Lighting model (no specular reflection)
+
+# Set diffuse texture
+map_Kd white.png
