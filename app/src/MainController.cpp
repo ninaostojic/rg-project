@@ -27,9 +27,16 @@ namespace app {
         m_point_light.quadratic = 0.032f;
 
         auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
-        auto window = platform->window();
+        auto window   = platform->window();
         engine::graphics::OpenGL::create_bloom_fbo(window->width(), window->height());
         engine::graphics::OpenGL::crate_blur_fbo(window->width(), window->height());
+
+        auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
+        glm::vec3 positions[100];
+        for (int i = 0; i < 100; i++) {
+            positions[i] = glm::vec3(2.0f * i, 0.0f, 0.0f);
+        }
+        resources->model("backpack")->set_instancing_data(&positions, sizeof(glm::vec3), 100);
 
         spdlog::info("MainController initialized");
     }
@@ -44,8 +51,8 @@ namespace app {
 
     void MainController::draw_backpack() {
         // Model
-        auto resources                  = engine::core::Controller::get<engine::resources::ResourcesController>();
-        auto graphics                   = engine::core::Controller::get<engine::graphics::GraphicsController>();
+        auto resources                     = engine::core::Controller::get<engine::resources::ResourcesController>();
+        auto graphics                      = engine::core::Controller::get<engine::graphics::GraphicsController>();
         engine::resources::Model *backpack = resources->model("backpack");
         // Shader
         engine::resources::Shader *shader = resources->shader("textured_lit");
@@ -75,12 +82,12 @@ namespace app {
         shader->set_float("pointLight.quadratic", m_point_light.quadratic);
 
         shader->set_vec3("viewingPosition", graphics->camera()->Position);
-        backpack->draw(shader);
+        backpack->draw_instanced(shader, 100);
     }
 
     void MainController::draw_point_light() {
-        auto resources                  = engine::core::Controller::get<engine::resources::ResourcesController>();
-        auto graphics                   = engine::core::Controller::get<engine::graphics::GraphicsController>();
+        auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
+        auto graphics  = engine::core::Controller::get<engine::graphics::GraphicsController>();
 
         auto cube   = resources->model("cube");
         auto shader = resources->shader("solid_color");
@@ -108,10 +115,9 @@ namespace app {
         draw_backpack();
         draw_point_light();
 
-
         auto blur_shader = resources->shader("blur");
         blur_shader->use();
-        int amount = 10;
+        int amount      = 10;
         bool horizontal = true;
         for (int i = 0; i < amount; i++) {
             blur_shader->set_int("horizontal", horizontal);
