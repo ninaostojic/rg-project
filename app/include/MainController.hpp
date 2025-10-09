@@ -17,6 +17,8 @@ namespace app {
 
         void draw_backpack();
 
+        void draw_point_light();
+
         void begin_draw() override;
 
         void draw() override;

@@ -41,7 +41,7 @@ namespace app {
         // Model
         auto resources                  = engine::core::Controller::get<engine::resources::ResourcesController>();
         auto graphics                   = engine::core::Controller::get<engine::graphics::GraphicsController>();
-        engine::resources::Model *corgi = resources->model("backpack");
+        engine::resources::Model *backpack = resources->model("backpack");
         // Shader
         engine::resources::Shader *shader = resources->shader("textured_lit");
 
@@ -70,7 +70,25 @@ namespace app {
         shader->set_float("pointLight.quadratic", m_point_light.quadratic);
 
         shader->set_vec3("viewingPosition", graphics->camera()->Position);
-        corgi->draw(shader);
+        backpack->draw(shader);
+    }
+
+    void MainController::draw_point_light() {
+        auto resources                  = engine::core::Controller::get<engine::resources::ResourcesController>();
+        auto graphics                   = engine::core::Controller::get<engine::graphics::GraphicsController>();
+
+        auto cube   = resources->model("cube");
+        auto shader = resources->shader("solid_color");
+
+        shader->use();
+        shader->set_mat4("projection", graphics->projection_matrix());
+        shader->set_mat4("view", graphics->camera()->view_matrix());
+        auto model = glm::mat4(1.0f);
+        model      = glm::translate(model, m_point_light.position);
+        model      = glm::scale(model, glm::vec3(0.3f));
+        shader->set_mat4("model", model);
+        shader->set_vec4("color", glm::vec4(m_point_light.diffuse, 1.0f));
+        cube->draw(shader);
     }
 
     void MainController::begin_draw() {
@@ -80,6 +98,7 @@ namespace app {
     void MainController::draw() {
         // clear buffers (color buffer, depth buffer)
         draw_backpack();
+        draw_point_light();
         // swapbuffers
     }
 
