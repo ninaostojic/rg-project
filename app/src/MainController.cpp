@@ -6,10 +6,15 @@
 #include <engine/graphics/GraphicsController.hpp>
 #include "../include/MainController.hpp"
 
+#include <WindowSizeObserver.hpp>
 #include <spdlog/spdlog.h>
 
 namespace app {
     void MainController::initialize() {
+        auto observer = std::make_unique<WindowSizeObserver>();
+        engine::core::Controller::get<engine::platform::PlatformController>()->register_platform_event_observer(
+                std::move(observer));
+
         engine::graphics::OpenGL::enable_depth_testing();
 
         m_directional_light.direction = glm::vec3(0.0f, -2.0f, -2.0f);
