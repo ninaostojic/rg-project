@@ -22,7 +22,7 @@ namespace app {
         m_directional_light.diffuse   = glm::vec3(0.4f, 0.3f, 1.0f);
         m_directional_light.specular  = glm::vec3(0.1f, 0.1f, 0.1f);
 
-        m_point_light.position = glm::vec3(0.0, -5.0f, 1.0f);
+        m_point_light.position = glm::vec3(-1.0f, 0.5f, 0.0f);
         m_point_light.ambient  = glm::vec3(0.005f, 0.005f, 0.005f);
         m_point_light.diffuse  = glm::vec3(0.1f, 10.0f, 0.2f);
         m_point_light.specular = glm::vec3(0.1f, 0.1f, 0.1f);
@@ -47,58 +47,81 @@ namespace app {
         return true;
     }
 
-    void MainController::draw_micheal() {
-        // Model
-        auto resources                    = engine::core::Controller::get<engine::resources::ResourcesController>();
-        auto graphics                     = engine::core::Controller::get<engine::graphics::GraphicsController>();
-        engine::resources::Model *micheal = resources->model("micheal_myers");
-        // Shader
-        engine::resources::Shader *shader = resources->shader("textured_lit");
+    void MainController::set_uniforms(std::string name) {
+        auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
+        auto graphics  = engine::core::Controller::get<engine::graphics::GraphicsController>();
+
+        engine::resources::Shader *shader = resources->shader(name);
 
         shader->use();
         shader->set_mat4("projection", graphics->projection_matrix());
         shader->set_mat4("view", graphics->camera()->view_matrix());
-        auto model = glm::mat4(1.0f);
-        model      = glm::translate(model, glm::vec3(0.0f, 0.0f, -3.0f));
-        model      = glm::scale(model, glm::vec3(0.3f));
-        shader->set_mat4("model", model);
+        shader->set_vec3("viewingPosition", graphics->camera()->Position);
 
         shader->set_vec3("directionalLight.direction", m_directional_light.direction);
-
         shader->set_vec3("directionalLight.diffuse", m_directional_light.diffuse);
         shader->set_vec3("directionalLight.ambient", m_directional_light.ambient);
         shader->set_vec3("directionalLight.specular", m_directional_light.specular);
 
         shader->set_vec3("pointLight.position", m_point_light.position);
-
         shader->set_vec3("pointLight.diffuse", m_point_light.diffuse);
         shader->set_vec3("pointLight.ambient", m_point_light.ambient);
         shader->set_vec3("pointLight.specular", m_point_light.specular);
-
         shader->set_float("pointLight.constant", m_point_light.constant);
         shader->set_float("pointLight.linear", m_point_light.linear);
         shader->set_float("pointLight.quadratic", m_point_light.quadratic);
+    }
 
-        shader->set_vec3("viewingPosition", graphics->camera()->Position);
+    void MainController::draw_micheal() {
+        auto resources                    = engine::core::Controller::get<engine::resources::ResourcesController>();
+        engine::resources::Model *micheal = resources->model("micheal_myers");
+        engine::resources::Shader *shader = resources->shader("textured_lit");
+
+        shader->use();
+        auto model = glm::mat4(1.0f);
+        model      = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+        model      = glm::scale(model, glm::vec3(2.0f));
+        shader->set_mat4("model", model);
+
         micheal->draw_instanced(shader, 100);
     }
 
     void MainController::draw_point_light() {
         auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
-        auto graphics  = engine::core::Controller::get<engine::graphics::GraphicsController>();
-
-        auto cube   = resources->model("cube");
-        auto shader = resources->shader("solid_color");
+        auto cube      = resources->model("cube");
+        auto shader    = resources->shader("solid_color");
 
         shader->use();
-        shader->set_mat4("projection", graphics->projection_matrix());
-        shader->set_mat4("view", graphics->camera()->view_matrix());
         auto model = glm::mat4(1.0f);
         model      = glm::translate(model, m_point_light.position);
-        model      = glm::scale(model, glm::vec3(0.3f));
+        model      = glm::scale(model, glm::vec3(0.1f));
         shader->set_mat4("model", model);
         shader->set_vec4("color", glm::vec4(m_point_light.diffuse, 1.0f));
         cube->draw(shader);
+    }
+
+    void MainController::draw_pumpkins() {
+        auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
+        auto pumpkin   = resources->model("pumpkin");
+        auto shader    = resources->shader("textured_lit");
+
+        shader->use();
+        auto modelLeft = glm::mat4(1.0f);
+        modelLeft      = glm::translate(modelLeft, glm::vec3(-1.75f, 0.0f, 0.0f));
+        modelLeft      = glm::scale(modelLeft, glm::vec3(2.0f));
+        modelLeft      = glm::rotate(modelLeft, glm::radians(30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+        shader->set_mat4("model", modelLeft);
+        pumpkin->draw(shader);
+
+        shader->use();
+        auto modelRight = glm::mat4(1.0f);
+        modelRight      = glm::translate(
+                modelRight, glm::vec3(1.75f, 0.0f, 0.0f));
+        modelRight = glm::scale(modelRight, glm::vec3(2.0f));
+        modelRight = glm::rotate(modelRight, glm::radians(-30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        shader->set_mat4("model", modelRight);
+        pumpkin->draw(shader);
     }
 
     void MainController::begin_draw() {
@@ -110,8 +133,12 @@ namespace app {
 
         engine::graphics::OpenGL::bind_and_clear_fbo_framebuffer();
 
+        set_uniforms("textured_lit");
+        set_uniforms("solid_color");
+
         draw_micheal();
         draw_point_light();
+        draw_pumpkins();
 
         auto blur_shader = resources->shader("blur");
         blur_shader->use();

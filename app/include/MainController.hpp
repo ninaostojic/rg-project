@@ -15,9 +15,13 @@ namespace app {
 
         bool loop() override;
 
+        void set_uniforms(std::string name);
+
         void draw_micheal();
 
         void draw_point_light();
+
+        void draw_pumpkins();
 
         void begin_draw() override;
 
@@ -30,6 +34,7 @@ namespace app {
         void update() override;
 
         void poll_events() override;
+
     public:
         std::string_view name() const override {
             return "app::MainController";
