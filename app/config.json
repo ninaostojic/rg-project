@@ -11,6 +11,12 @@
       },
       "cube": {
         "path": "cube/cube.obj"
+      },
+      "mud_forest": {
+        "path": "MudForest/mud_forest.obj"
+      },
+      "dead_tree": {
+        "path": "DeadTree/DeadTree-Export.obj"
       }
     }
   },

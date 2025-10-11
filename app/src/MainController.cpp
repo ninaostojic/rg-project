@@ -22,7 +22,8 @@ namespace app {
         m_directional_light.diffuse   = glm::vec3(0.4f, 0.3f, 1.0f);
         m_directional_light.specular  = glm::vec3(0.1f, 0.1f, 0.1f);
 
-        m_point_light.position = glm::vec3(-1.0f, 0.5f, 0.0f);
+        // m_point_light.position = glm::vec3(-1.25f, 0.5f, 0.0f);
+        m_point_light.position = glm::vec3(2.0f, 0.5f, 0.35f);
         m_point_light.ambient  = glm::vec3(0.005f, 0.005f, 0.005f);
         m_point_light.diffuse  = glm::vec3(0.1f, 10.0f, 0.2f);
         m_point_light.specular = glm::vec3(0.1f, 0.1f, 0.1f);
@@ -31,11 +32,23 @@ namespace app {
         m_point_light.linear    = 0.09f;
         m_point_light.quadratic = 0.032f;
 
-        auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
-        auto window   = platform->window();
+        auto platform  = engine::core::Controller::get<engine::platform::PlatformController>();
+        auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
+        auto window    = platform->window();
         engine::graphics::OpenGL::create_bloom_fbo(window->width(), window->height());
         engine::graphics::OpenGL::crate_blur_fbo(window->width(), window->height());
 
+        glm::vec3 instances_data[m_num_tree_instances];
+        for (int i = 0; i < m_num_tree_instances; i++) {
+            float instance_x = 0.0f;
+            float instance_y = 0.0f;
+            while (instance_x >= -4.0f && instance_x <= 4.0f && instance_y >= -4.0f && instance_y <= 4.0f) {
+                instance_x = (2.0f * (rand() % 100) / 100.0f - 1.0f) * 40.0f;
+                instance_y = (2.0f * (rand() % 100) / 100.0f - 1.0f) * 40.0f;
+            }
+            instances_data[i] = glm::vec3(instance_x, 0, instance_y);
+        }
+        resources->model("dead_tree")->set_instancing_data(&instances_data, sizeof(glm::vec3), m_num_tree_instances);
         spdlog::info("MainController initialized");
     }
 
@@ -83,7 +96,7 @@ namespace app {
         model      = glm::scale(model, glm::vec3(2.0f));
         shader->set_mat4("model", model);
 
-        micheal->draw_instanced(shader, 100);
+        micheal->draw(shader);
     }
 
     void MainController::draw_point_light() {
@@ -124,6 +137,34 @@ namespace app {
         pumpkin->draw(shader);
     }
 
+    void MainController::draw_ground() {
+        auto resources                    = engine::core::Controller::get<engine::resources::ResourcesController>();
+        engine::resources::Model *micheal = resources->model("mud_forest");
+        engine::resources::Shader *shader = resources->shader("textured_lit");
+
+        shader->use();
+        auto model = glm::mat4(1.0f);
+        model      = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+        model      = glm::scale(model, glm::vec3(2.0f));
+        shader->set_mat4("model", model);
+
+        micheal->draw(shader);
+    }
+
+    void MainController::draw_trees() {
+        auto resources                    = engine::core::Controller::get<engine::resources::ResourcesController>();
+        engine::resources::Model *micheal = resources->model("dead_tree");
+        engine::resources::Shader *shader = resources->shader("textured_lit_instanced");
+
+        shader->use();
+        auto model = glm::mat4(1.0f);
+        model      = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+        model      = glm::scale(model, glm::vec3(2.0f));
+        shader->set_mat4("model", model);
+
+        micheal->draw_instanced(shader, m_num_tree_instances);
+    }
+
     void MainController::begin_draw() {
         engine::graphics::OpenGL::clear_buffers();
     }
@@ -134,11 +175,15 @@ namespace app {
         engine::graphics::OpenGL::bind_and_clear_fbo_framebuffer();
 
         set_uniforms("textured_lit");
+        set_uniforms("textured_lit_instanced");
+
         set_uniforms("solid_color");
 
+        draw_ground();
         draw_micheal();
         draw_point_light();
         draw_pumpkins();
+        draw_trees();
 
         auto blur_shader = resources->shader("blur");
         blur_shader->use();

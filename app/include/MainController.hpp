@@ -23,6 +23,10 @@ namespace app {
 
         void draw_pumpkins();
 
+        void draw_ground();
+
+        void draw_trees();
+
         void begin_draw() override;
 
         void draw() override;
@@ -44,6 +48,7 @@ namespace app {
         DirectionalLight m_directional_light;
         PointLight m_point_light;
         bool m_cursor_visible;
+        int m_num_tree_instances = 300;
     };
 
 } // app
