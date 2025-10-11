@@ -35,6 +35,9 @@ namespace app {
         ImGui::Begin("Light");
         ImGui::ColorEdit3("Light color", &main_controller->light_color[0]);
         ImGui::DragFloat("Light intensity", &main_controller->light_intensity, 0.01f, 0.0f, 10.0f);
+        if (ImGui::Button("Start/Stop")) {
+            main_controller->start_stop_light_action();
+        }
         ImGui::End();
         graphics->end_gui();
     }

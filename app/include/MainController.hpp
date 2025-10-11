@@ -33,6 +33,8 @@ namespace app {
 
         void end_draw() override;
 
+        void update_light();
+
         void update_camera();
 
         void update() override;
@@ -44,6 +46,8 @@ namespace app {
             return "app::MainController";
         }
 
+        void start_stop_light_action();
+
         glm::vec3 light_color = {1.0f, 1.0f, 1.0f};
         float light_intensity = 2.0f;
 
@@ -53,6 +57,12 @@ namespace app {
         bool m_cursor_visible;
         int m_num_tree_instances = 300;
 
+        bool m_action_active = false;
+        float m_timer_value  = 0.0f;
+
+        glm::vec3 m_light_positions[2] = {glm::vec3(-1.25f, 0.5f, 0.0f), glm::vec3(2.0f, 0.5f, 0.35f)};
+
+        int m_light_position_index = 0;
     };
 
 } // app

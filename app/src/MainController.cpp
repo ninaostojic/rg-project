@@ -23,8 +23,7 @@ namespace app {
         m_directional_light.diffuse   = glm::vec3(0.4f, 0.3f, 1.0f);
         m_directional_light.specular  = glm::vec3(0.1f, 0.1f, 0.1f);
 
-        // m_point_light.position = glm::vec3(-1.25f, 0.5f, 0.0f);
-        m_point_light.position = glm::vec3(2.0f, 0.5f, 0.35f);
+        m_point_light.position = m_light_positions[0];
         m_point_light.ambient  = glm::vec3(0.005f, 0.005f, 0.005f);
         m_point_light.diffuse  = light_color * light_intensity;
         m_point_light.specular = glm::vec3(0.1f, 0.1f, 0.1f);
@@ -240,8 +239,22 @@ namespace app {
         camera->zoom(mouse.scroll);
     }
 
-    void MainController::update() {
+    void MainController::update_light() {
+        const auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
+
         m_point_light.diffuse = light_color * light_intensity;
+        if (m_action_active) {
+            m_timer_value += platform->dt();
+        }
+        if (m_timer_value >= 1.0f) {
+            m_timer_value          = 0.0f;
+            m_light_position_index = 1 - m_light_position_index;
+            m_point_light.position = m_light_positions[m_light_position_index];
+        }
+    }
+
+    void MainController::update() {
+        update_light();
         update_camera();
     }
 
@@ -252,6 +265,10 @@ namespace app {
             m_cursor_visible = !m_cursor_visible;
             platform->set_enable_cursor(m_cursor_visible);
         }
+    }
+
+    void MainController::start_stop_light_action() {
+        m_action_active = !m_action_active;
     }
 
 } // app
