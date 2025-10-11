@@ -33,8 +33,9 @@ namespace app {
         graphics->begin_gui();
         // Draw camera info
         ImGui::Begin("Light");
-        ImGui::ColorEdit3("Light color", &main_controller->light_color[0]);
-        ImGui::DragFloat("Light intensity", &main_controller->light_intensity, 0.01f, 0.0f, 10.0f);
+        ImGui::ColorEdit3("Directional light color", &main_controller->directional_light_color[0]);
+        ImGui::ColorEdit3("Point light color", &main_controller->light_color[0]);
+        ImGui::DragFloat("Point light intensity", &main_controller->light_intensity, 0.01f, 0.0f, 10.0f);
         if (ImGui::Button("Start/Stop")) {
             main_controller->start_stop_light_action();
         }

@@ -21,7 +21,7 @@ namespace app {
 
         m_directional_light.direction = glm::vec3(0.0f, -2.0f, -2.0f);
         m_directional_light.ambient   = glm::vec3(0.005f, 0.005f, 0.005f);
-        m_directional_light.diffuse   = glm::vec3(0.4f, 0.3f, 1.0f);
+        m_directional_light.diffuse   = directional_light_color;
         m_directional_light.specular  = glm::vec3(0.1f, 0.1f, 0.1f);
 
         m_point_light.position = m_light_positions[0];
@@ -252,6 +252,8 @@ namespace app {
             m_light_position_index = 1 - m_light_position_index;
             m_point_light.position = m_light_positions[m_light_position_index];
         }
+
+        m_directional_light.diffuse = directional_light_color;
     }
 
     void MainController::update() {

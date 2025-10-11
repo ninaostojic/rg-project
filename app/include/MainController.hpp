@@ -48,6 +48,8 @@ namespace app {
 
         void start_stop_light_action();
 
+        glm::vec3 directional_light_color = glm::vec3(0.4f, 0.3f, 1.0f);
+
         glm::vec3 light_color = {1.0f, 1.0f, 1.0f};
         float light_intensity = 2.0f;
 
