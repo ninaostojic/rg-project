@@ -17,6 +17,7 @@ namespace app {
                 std::move(observer));
 
         engine::graphics::OpenGL::enable_depth_testing();
+        engine::graphics::OpenGL::setup_fullscreen_rect();
 
         m_directional_light.direction = glm::vec3(0.0f, -2.0f, -2.0f);
         m_directional_light.ambient   = glm::vec3(0.005f, 0.005f, 0.005f);
