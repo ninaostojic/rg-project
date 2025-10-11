@@ -15,6 +15,8 @@ add_executable(${PROJECT_NAME} ${sources} ${headers}
         include/Lights.hpp
         src/WindowSizeObserver.cpp
         include/WindowSizeObserver.hpp
+        src/GUIController.cpp
+        src/GUIController.hpp
 )
 target_link_libraries(${PROJECT_NAME} PRIVATE matf-rg-engine)
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)

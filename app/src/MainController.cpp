@@ -6,6 +6,7 @@
 #include <engine/graphics/GraphicsController.hpp>
 #include "../include/MainController.hpp"
 
+#include <GUIController.hpp>
 #include <WindowSizeObserver.hpp>
 #include <spdlog/spdlog.h>
 
@@ -25,7 +26,7 @@ namespace app {
         // m_point_light.position = glm::vec3(-1.25f, 0.5f, 0.0f);
         m_point_light.position = glm::vec3(2.0f, 0.5f, 0.35f);
         m_point_light.ambient  = glm::vec3(0.005f, 0.005f, 0.005f);
-        m_point_light.diffuse  = glm::vec3(0.1f, 10.0f, 0.2f);
+        m_point_light.diffuse  = light_color * light_intensity;
         m_point_light.specular = glm::vec3(0.1f, 0.1f, 0.1f);
 
         m_point_light.constant  = 1.0f;
@@ -210,6 +211,10 @@ namespace app {
     }
 
     void MainController::update_camera() {
+        auto gui = engine::core::Controller::get<GUIController>();
+        if (gui->gui_shown) {
+            return;
+        }
         auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
         auto camera   = engine::core::Controller::get<engine::graphics::GraphicsController>()->camera();
         float dt      = platform->dt();
@@ -236,6 +241,7 @@ namespace app {
     }
 
     void MainController::update() {
+        m_point_light.diffuse = light_color * light_intensity;
         update_camera();
     }
 

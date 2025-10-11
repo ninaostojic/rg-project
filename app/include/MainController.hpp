@@ -44,11 +44,15 @@ namespace app {
             return "app::MainController";
         }
 
+        glm::vec3 light_color = {1.0f, 1.0f, 1.0f};
+        float light_intensity = 2.0f;
+
     private:
         DirectionalLight m_directional_light;
         PointLight m_point_light;
         bool m_cursor_visible;
         int m_num_tree_instances = 300;
+
     };
 
 } // app
