@@ -15,7 +15,7 @@ namespace app {
 
         bool loop() override;
 
-        void draw_backpack();
+        void draw_micheal();
 
         void draw_point_light();
 

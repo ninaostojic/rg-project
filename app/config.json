@@ -1,10 +1,7 @@
 {
   "resources": {
     "models": {
-      "backpack": {
-        "path": "backpack/backpack.obj"
-      },
-      "michael_myers": {
+      "micheal_myers": {
         "path": "micheal_myers/model.obj",
         "flip_uvs": true
       },

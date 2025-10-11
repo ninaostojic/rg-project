@@ -36,13 +36,6 @@ namespace app {
         engine::graphics::OpenGL::create_bloom_fbo(window->width(), window->height());
         engine::graphics::OpenGL::crate_blur_fbo(window->width(), window->height());
 
-        auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
-        glm::vec3 positions[100];
-        for (int i = 0; i < 100; i++) {
-            positions[i] = glm::vec3(2.0f * i, 0.0f, 0.0f);
-        }
-        resources->model("backpack")->set_instancing_data(&positions, sizeof(glm::vec3), 100);
-
         spdlog::info("MainController initialized");
     }
 
@@ -54,11 +47,11 @@ namespace app {
         return true;
     }
 
-    void MainController::draw_backpack() {
+    void MainController::draw_micheal() {
         // Model
-        auto resources                     = engine::core::Controller::get<engine::resources::ResourcesController>();
-        auto graphics                      = engine::core::Controller::get<engine::graphics::GraphicsController>();
-        engine::resources::Model *backpack = resources->model("backpack");
+        auto resources                    = engine::core::Controller::get<engine::resources::ResourcesController>();
+        auto graphics                     = engine::core::Controller::get<engine::graphics::GraphicsController>();
+        engine::resources::Model *micheal = resources->model("micheal_myers");
         // Shader
         engine::resources::Shader *shader = resources->shader("textured_lit");
 
@@ -87,7 +80,7 @@ namespace app {
         shader->set_float("pointLight.quadratic", m_point_light.quadratic);
 
         shader->set_vec3("viewingPosition", graphics->camera()->Position);
-        backpack->draw_instanced(shader, 100);
+        micheal->draw_instanced(shader, 100);
     }
 
     void MainController::draw_point_light() {
@@ -117,7 +110,7 @@ namespace app {
 
         engine::graphics::OpenGL::bind_and_clear_fbo_framebuffer();
 
-        draw_backpack();
+        draw_micheal();
         draw_point_light();
 
         auto blur_shader = resources->shader("blur");
