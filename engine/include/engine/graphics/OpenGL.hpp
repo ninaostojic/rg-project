@@ -140,6 +140,20 @@ namespace engine::graphics {
         */
         static std::string get_compilation_error_message(uint32_t shader_id);
 
+        static void setup_fullscreen_rect();
+
+        static void draw_fullscreen_rect();
+
+        static void create_bloom_fbo(int windowWidth, int windowHeight);
+
+        static void crate_blur_fbo(int windowWidth, int windowHeight);
+
+        static void bind_and_clear_fbo_framebuffer();
+
+        static void blur_framebuffer_texture(int i, bool horizontal);
+
+        static void apply_blur_framebuffer();
+
     private:
         /**
         * @brief Throws an engine::util::EngineError of type @ref engine::util::EngineError::Type::OpenGLError if an OpenGL error occurred. Used internally.

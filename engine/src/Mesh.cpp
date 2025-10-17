@@ -63,6 +63,41 @@ namespace engine::resources {
         glBindVertexArray(0);
     }
 
+    void Mesh::draw_instanced(const Shader *shader, int num_instances) {
+        std::unordered_map<std::string_view, uint32_t> counts;
+        std::string uniform_name;
+        uniform_name.reserve(32);
+        for (int i = 0; i < m_textures.size(); i++) {
+            glActiveTexture(GL_TEXTURE0 + i);
+            const auto &texture_type = Texture::uniform_name_convention(m_textures[i]->type());
+            uniform_name.append(texture_type);
+            const auto count = (counts[texture_type] += 1);
+            uniform_name.append(std::to_string(count));
+            shader->set_int(uniform_name, i);
+            glBindTexture(GL_TEXTURE_2D, m_textures[i]->id());
+            uniform_name.clear();
+        }
+        glBindVertexArray(m_vao);
+        glDrawElementsInstanced(GL_TRIANGLES, m_num_indices, GL_UNSIGNED_INT, 0, num_instances);
+        glBindVertexArray(0);
+    }
+
+    void Mesh::set_instancing_data(void* data, unsigned int element_size, int num_elements) {
+        glBindVertexArray(m_vao);
+
+        unsigned int instancingVBO;
+        glGenBuffers(1, &instancingVBO);
+        glBindBuffer(GL_ARRAY_BUFFER, instancingVBO);
+        glBufferData(GL_ARRAY_BUFFER, element_size * num_elements, data, GL_STATIC_DRAW);
+
+        glEnableVertexAttribArray(5);
+        glVertexAttribPointer(5, element_size/4, GL_FLOAT, GL_FALSE, element_size, (void*)0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glVertexAttribDivisor(5, 1);
+
+        glBindVertexArray(0);
+    }
+
     void Mesh::destroy() {
         glDeleteVertexArrays(1, &m_vao);
     }

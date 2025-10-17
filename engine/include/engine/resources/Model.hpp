@@ -24,6 +24,10 @@ namespace engine::resources {
         */  
         void draw(const Shader *shader);
 
+        void draw_instanced(const Shader *shader, int num_instances);
+
+        void set_instancing_data(void* data, unsigned int element_size, int num_elements);
+
         /**
         * @brief Destroys the model in the OpenGL context.
         */  

@@ -1,8 +1,22 @@
 {
   "resources": {
     "models": {
-      "corgi" : {
-        "path" : "corgi/Corgi-2018/export/Corgi-2018-obj.obj"
+      "micheal_myers": {
+        "path": "micheal_myers/model.obj",
+        "flip_uvs": true
+      },
+      "pumpkin": {
+        "path": "Pumpkin_OBJ/pumpkin.obj",
+        "flip_uvs": true
+      },
+      "cube": {
+        "path": "cube/cube.obj"
+      },
+      "mud_forest": {
+        "path": "MudForest/mud_forest.obj"
+      },
+      "dead_tree": {
+        "path": "DeadTree/DeadTree-Export.obj"
       }
     }
   },
