@@ -7,8 +7,7 @@
 
 {F1} -> Show/Hide cursor  
 {F2} -> Show/Hide gui 
-...  
-{BUTTONN} -> {ACTIONN}
+
 
 ## Features
 
